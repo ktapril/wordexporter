@@ -257,6 +257,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             padding: 12px 24px;
         }
     </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/docx/8.5.0/docx.umd.min.js"></script>
 </head>
 <body>
 <?php
