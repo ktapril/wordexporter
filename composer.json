@@ -1,0 +1,13 @@
+{
+    "name": "noseworkv2/nosework-competition",
+    "description": "Information system for nosework competition results",
+    "type": "project",
+    "autoload": {
+        "psr-4": {
+            "NoseworkV2\\": "src/"
+        }
+    },
+    "require": {
+        "php": ">=8.0"
+    }
+}
