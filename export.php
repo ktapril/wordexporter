@@ -43,7 +43,10 @@ $participants = $selectedCompetitionId !== null ? $service->getParticipantsByCom
 $exportedTable = null;
 $participantOrder = [];
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+if ($_SERVER['REQUEST_METHOD'] === 'POST') 
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // определяем, какое действие выбрал пользователь 
+    $action = $_POST['export_action'] ?? 'view';
     // Получаем порядок участников из POST-данных
     $participantOrderRaw = $_POST['participant_order'] ?? '';
     
