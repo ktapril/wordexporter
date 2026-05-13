@@ -300,8 +300,15 @@ renderHeader($currentPage);
                                 <?php endforeach; ?>
                             </ul>
                             <input type="hidden" name="participant_order" id="participantOrderInput" value="">
-                            <button type="submit" class="button">Сформировать таблицу</button>
-                        </form>
+                            <div style="display: flex; gap: 10px; margin-top: 15px;">
+    <button type="submit" name="export_action" value="view" class="button">
+        Сформировать для копирования
+    </button>
+
+    <button type="submit" name="export_action" value="download" class="button" style="background-color: #2b5797;">
+        Скачать .docx
+    </button>
+</div>
                     </div>
 
                     <?php if ($exportedTable !== null): ?>
