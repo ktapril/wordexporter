@@ -379,6 +379,9 @@ renderHeader($currentPage);
                                     </tbody>
                                 </table>
                                 <button type="button" class="copy-button button" id="copyTableButton">Скопировать</button>
+                            <button type="button" class="copy-button button" id="downloadWordButton">
+                            Скачать .docx
+                            </button>
                             </div>
                         </article>
                     <?php else: ?>
