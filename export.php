@@ -462,8 +462,21 @@ renderHeader($currentPage);
     // Инициализация порядка
     updateOrderInput();
 
-    // Обработчик кнопки копирования таблицы
-    const copyButton = document.getElementById('copyTableButton');
+
+    // кнопка "Скачать .docx" берет таблицу и отправляет на сервер
+   const downloadButton = document.getElementById('downloadWordButton');
+if (downloadButton) {
+    downloadButton.addEventListener('click', function() {
+        const table = document.querySelector('.export-table');
+        if (!table) return;
+
+        document.getElementById('tableHtmlInput').value = table.outerHTML;
+        document.getElementById('wordExportForm').submit();
+    });
+}
+}
+        // кнопка "Скопировать" копирует таблицу в буфер обмена
+        const copyButton = document.getElementById('copyTableButton');
     if (copyButton) {
         copyButton.addEventListener('click', async function() {
             const table = document.querySelector('.export-table');
