@@ -379,15 +379,9 @@ renderHeader($currentPage);
                                     </tbody>
                                 </table>
                                 <button type="button" class="copy-button button" id="copyTableButton">Скопировать</button>
-                           <form method="POST" action="download_word.php" id="wordExportForm" style="display:inline-block;">
-    
-    <input type="hidden" name="table_html" id="tableHtmlInput">
-
-    <button type="button" class="copy-button button" id="downloadWordButton">
-        Скачать .docx
-    </button>
-
-</form>
+                            <button type="button" class="copy-button button" id="downloadWordButton">
+                            Скачать .docx
+                            </button>
                             </div>
                         </article>
                     <?php else: ?>
@@ -462,21 +456,40 @@ renderHeader($currentPage);
     // Инициализация порядка
     updateOrderInput();
 
+const downloadButton = document.getElementById('downloadWordButton');
 
-    // кнопка "Скачать .docx" берет таблицу и отправляет на сервер
-   const downloadButton = document.getElementById('downloadWordButton');
 if (downloadButton) {
-    downloadButton.addEventListener('click', function() {
-        const table = document.querySelector('.export-table');
-        if (!table) return;
 
-        document.getElementById('tableHtmlInput').value = table.outerHTML;
-        document.getElementById('wordExportForm').submit();
+    downloadButton.addEventListener('click', function() {
+
+        const table = document.querySelector('.export-table');
+
+        if (!table) {
+            alert('Сначала сформируйте таблицу');
+            return;
+        }
+
+        const form = document.createElement('form');
+
+        form.method = 'POST';
+        form.action = 'download_word.php';
+
+        const input = document.createElement('input');
+
+        input.type = 'hidden';
+        input.name = 'table_html';
+        input.value = table.outerHTML;
+
+        form.appendChild(input);
+
+        document.body.appendChild(form);
+
+        form.submit();
     });
 }
-}
-        // кнопка "Скопировать" копирует таблицу в буфер обмена
-        const copyButton = document.getElementById('copyTableButton');
+
+    // Обработчик кнопки копирования таблицы
+    const copyButton = document.getElementById('copyTableButton');
     if (copyButton) {
         copyButton.addEventListener('click', async function() {
             const table = document.querySelector('.export-table');
