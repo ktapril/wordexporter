@@ -464,21 +464,47 @@ if (downloadButton) {
 
         const table = document.querySelector('.export-table');
 
-        if (!table) {
-            alert('Сначала сформируйте таблицу');
-            return;
-        }
+if (!table) {
+    alert('Сначала сформируйте таблицу');
+    return;
+}
 
-        const form = document.createElement('form');
+const clonedTable = table.cloneNode(true);
 
-        form.method = 'POST';
-        form.action = 'download_word.php';
+clonedTable.style.borderCollapse = 'collapse';
+clonedTable.style.width = '100%';
+clonedTable.style.fontFamily = "'Times New Roman', Times, serif";
+clonedTable.style.fontSize = '9pt';
+clonedTable.style.backgroundColor = 'white';
+clonedTable.style.color = 'black';
 
-        const input = document.createElement('input');
+const allCells = clonedTable.querySelectorAll('th, td');
 
-        input.type = 'hidden';
-        input.name = 'table_html';
-        input.value = table.outerHTML;
+allCells.forEach(cell => {
+
+    cell.style.border = '1px solid black';
+    cell.style.padding = '10px';
+    cell.style.textAlign = 'center';
+    cell.style.verticalAlign = 'middle';
+
+    cell.style.fontFamily = "'Times New Roman', Times, serif";
+    cell.style.fontSize = '9pt';
+
+    cell.style.color = 'black';
+    cell.style.backgroundColor = 'white';
+});
+
+const form = document.createElement('form');
+
+form.method = 'POST';
+form.action = 'download_word.php';
+
+const input = document.createElement('input');
+
+input.type = 'hidden';
+input.name = 'table_html';
+
+input.value = clonedTable.outerHTML;
 
         form.appendChild(input);
 
