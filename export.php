@@ -379,9 +379,15 @@ renderHeader($currentPage);
                                     </tbody>
                                 </table>
                                 <button type="button" class="copy-button button" id="copyTableButton">Скопировать</button>
-                            <button type="button" class="copy-button button" id="downloadWordButton">
-                            Скачать .docx
-                            </button>
+                           <form method="POST" action="download_word.php" id="wordExportForm" style="display:inline-block;">
+    
+    <input type="hidden" name="table_html" id="tableHtmlInput">
+
+    <button type="button" class="copy-button button" id="downloadWordButton">
+        Скачать .docx
+    </button>
+
+</form>
                             </div>
                         </article>
                     <?php else: ?>
