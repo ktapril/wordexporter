@@ -14,7 +14,17 @@ $section = $phpWord->addSection([
     'orientation' => 'landscape'
 ]);
 
-$section->addText('Тестовый Word-документ');
+$htmlTable = $_POST['table_html'] ?? '';
+
+if (!empty($htmlTable)) {
+
+    \PhpOffice\PhpWord\Shared\Html::addHtml(
+        $section,
+        $htmlTable,
+        false,
+        false
+    );
+}
 
 $fileName = 'test.docx';
 

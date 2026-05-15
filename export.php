@@ -379,9 +379,9 @@ renderHeader($currentPage);
                                     </tbody>
                                 </table>
                                 <button type="button" class="copy-button button" id="copyTableButton">Скопировать</button>
-                            <a href="download_word.php" class="copy-button button">
+                            <button type="button" class="copy-button button" id="downloadWordButton">
     Скачать .docx
-</a>
+</button>
                             </div>
                         </article>
                     <?php else: ?>
@@ -457,6 +457,38 @@ renderHeader($currentPage);
     updateOrderInput();
 
     // Обработчик кнопки копирования таблицы
+    const downloadButton = document.getElementById('downloadWordButton');
+
+if (downloadButton) {
+
+    downloadButton.addEventListener('click', function() {
+
+        const table = document.querySelector('.export-table');
+
+        if (!table) {
+            alert('Сначала сформируйте таблицу');
+            return;
+        }
+
+        const form = document.createElement('form');
+
+        form.method = 'POST';
+        form.action = 'download_word.php';
+
+        const input = document.createElement('input');
+
+        input.type = 'hidden';
+        input.name = 'table_html';
+
+        input.value = table.outerHTML;
+
+        form.appendChild(input);
+
+        document.body.appendChild(form);
+
+        form.submit();
+    });
+}
     const copyButton = document.getElementById('copyTableButton');
     if (copyButton) {
         copyButton.addEventListener('click', async function() {
