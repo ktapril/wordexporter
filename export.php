@@ -527,6 +527,20 @@ allCells.forEach(cell => {
             // Находим все ячейки th и td и добавляем им инлайн-стили
             const allCells = clonedTable.querySelectorAll('th, td');
             allCells.forEach(cell => {
+               const verticalCells = clonedTable.querySelectorAll('.vertical-text');
+
+verticalCells.forEach(cell => {
+
+    cell.style.writingMode = 'vertical-rl';
+    cell.style.transform = 'rotate(180deg)';
+
+    cell.style.width = '28px';
+    cell.style.minWidth = '28px';
+
+    cell.style.whiteSpace = 'nowrap';
+    cell.style.textAlign = 'center';
+    cell.style.verticalAlign = 'middle';
+});
                 cell.style.border = '1px solid black';
                 cell.style.padding = '10px';
                 cell.style.textAlign = 'center';
