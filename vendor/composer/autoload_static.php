@@ -7,16 +7,32 @@ namespace Composer\Autoload;
 class ComposerStaticInit30e69efd3c6ee77c84c19183fd627604
 {
     public static $prefixLengthsPsr4 = array (
+        'P' =>
+        array (
+            'PhpOffice\\PhpWord\\' => 18,
+        ),
         'N' =>
         array (
             'NoseworkV2\\' => 11,
         ),
+        'L' =>
+        array (
+            'Laminas\\Escaper\\' => 16,
+        ),
     );
 
     public static $prefixDirsPsr4 = array (
+        'PhpOffice\\PhpWord\\' =>
+        array (
+            0 => __DIR__ . '/..' . '/phpoffice/phpword/src/PhpWord',
+        ),
         'NoseworkV2\\' =>
         array (
             0 => __DIR__ . '/../..' . '/src',
+        ),
+        'Laminas\\Escaper\\' =>
+        array (
+            0 => __DIR__ . '/..' . '/laminas/laminas-escaper/src',
         ),
     );
 

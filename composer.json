@@ -8,6 +8,7 @@
         }
     },
     "require": {
-        "php": ">=8.0"
+        "php": ">=8.0",
+        "phpoffice/phpword": "^1.1"
     }
 }
