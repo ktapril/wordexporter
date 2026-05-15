@@ -1,19 +1,32 @@
 <?php
-require_once __DIR__ . '/auth.php';
-requireAuth();
 
-// получаем HTML таблицы из формы
-$tableHtml = $_POST['table_html'] ?? '';
+require_once 'vendor/autoload.php';
 
-if (empty($tableHtml)) {
-    die('Таблица не получена');
-}
+use PhpOffice\PhpWord\PhpWord;
+use PhpOffice\PhpWord\IOFactory;
 
-// отправка файла пользователю как Word-документ
-header("Content-Type: application/msword; charset=UTF-8");
-header("Content-Disposition: attachment; filename=\"results.doc\"");
+$phpWord = new PhpWord();
 
-// обертка таблицы в мин HTML 
-echo "<html><head><meta charset='UTF-8'></head><body>";
-echo $tableHtml;
-echo "</body></html>";
+$section = $phpWord->addSection([
+    'orientation' => 'landscape'
+]);
+
+$section->addText('Тестовый Word-документ');
+
+$fileName = 'test.docx';
+
+header("Content-Description: File Transfer");
+header('Content-Disposition: attachment; filename="' . $fileName . '"');
+header('Content-Type: application/vnd.openxmlformats-officedocument.wordprocessingml.document');
+
+$tempFile = tempnam(sys_get_temp_dir(), 'word');
+
+$writer = IOFactory::createWriter($phpWord, 'Word2007');
+
+$writer->save($tempFile);
+
+readfile($tempFile);
+
+unlink($tempFile);
+
+exit;
