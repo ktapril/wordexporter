@@ -379,9 +379,9 @@ renderHeader($currentPage);
                                     </tbody>
                                 </table>
                                 <button type="button" class="copy-button button" id="copyTableButton">Скопировать</button>
-                            <button type="button" class="copy-button button" id="downloadWordButton">
-                            Скачать .docx
-                            </button>
+                            <a href="download_word.php" class="copy-button button">
+    Скачать .docx
+</a>
                             </div>
                         </article>
                     <?php else: ?>
@@ -455,7 +455,7 @@ renderHeader($currentPage);
 
     // Инициализация порядка
     updateOrderInput();
-    
+
     // Обработчик кнопки копирования таблицы
     const copyButton = document.getElementById('copyTableButton');
     if (copyButton) {
