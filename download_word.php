@@ -15,7 +15,7 @@ $section = $phpWord->addSection([
 ]);
 
 $htmlTable = $_POST['table_html'] ?? '';
-
+$htmlTable = str_replace('<br>', '<br />', $htmlTable);
 if (!empty($htmlTable)) {
 
     \PhpOffice\PhpWord\Shared\Html::addHtml(

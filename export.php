@@ -465,6 +465,24 @@ if (downloadButton) {
 
         const table = document.querySelector('.export-table');
 
+const clonedTable = table.cloneNode(true);
+
+clonedTable.style.borderCollapse = 'collapse';
+clonedTable.style.width = '100%';
+
+const allCells = clonedTable.querySelectorAll('th, td');
+
+allCells.forEach(cell => {
+
+    cell.style.border = '1px solid black';
+    cell.style.padding = '10px';
+    cell.style.textAlign = 'center';
+    cell.style.verticalAlign = 'middle';
+
+    cell.style.fontFamily = 'Times New Roman';
+    cell.style.fontSize = '9pt';
+});
+
         if (!table) {
             alert('Сначала сформируйте таблицу');
             return;
@@ -480,7 +498,7 @@ if (downloadButton) {
         input.type = 'hidden';
         input.name = 'table_html';
 
-        input.value = table.outerHTML;
+        input.value = clonedTable.outerHTML;
 
         form.appendChild(input);
 
