@@ -7,6 +7,8 @@ require_once 'vendor/autoload.php';
 
 use PhpOffice\PhpWord\PhpWord;
 use PhpOffice\PhpWord\IOFactory;
+use PhpOffice\PhpWord\Style\Table;
+use PhpOffice\PhpWord\Style\Cell;
 
 $phpWord = new PhpWord();
 
@@ -14,8 +16,41 @@ $section = $phpWord->addSection([
     'orientation' => 'landscape'
 ]);
 
-$htmlTable = $_POST['table_html'] ?? '';
-$htmlTable = str_replace('<br>', '<br />', $htmlTable);
+// м: создание таблицы Word
+$table = $section->addTable([
+    'borderSize' => 6,
+    'borderColor' => '000000',
+    'cellMargin' => 60
+]);
+
+// м: первая строка заголовков
+$table->addRow(1400);
+
+// м: № п/п
+$table->addCell(1200, [
+    'vMerge' => 'restart',
+    'valign' => 'center'
+])->addText('№ п/п');
+
+// м: порода
+$table->addCell(2200, [
+    'vMerge' => 'restart',
+    'valign' => 'center'
+])->addText('Порода');
+
+// м: кличка
+$table->addCell(2200, [
+    'vMerge' => 'restart',
+    'valign' => 'center'
+])->addText('Кличка');
+
+// м: пол (вертикальный текст)
+$table->addCell(900, [
+    'vMerge' => 'restart',
+    'valign' => 'center',
+    'textDirection' => \PhpOffice\PhpWord\Style\Cell::TEXT_DIR_BTLR
+])->addText('Пол');
+
 if (!empty($htmlTable)) {
 
     \PhpOffice\PhpWord\Shared\Html::addHtml(
@@ -25,6 +60,7 @@ if (!empty($htmlTable)) {
         false
     );
 }
+
 
 $fileName = 'test.docx';
 
