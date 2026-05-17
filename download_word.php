@@ -16,6 +16,24 @@ $section = $phpWord->addSection([
     'orientation' => 'landscape'
 ]);
 
+// м: стиль обычного текста таблицы
+$tableTextStyle = [
+    'name' => 'Times New Roman',
+    'size' => 9
+];
+
+// м: стиль заголовков таблицы
+$tableHeaderStyle = [
+    'name' => 'Times New Roman',
+    'size' => 9,
+    'bold' => true
+];
+
+// м: выравнивание текста
+$centerParagraph = [
+    'alignment' => 'center'
+];
+
 // м: создание таблицы Word
 $table = $section->addTable([
     'borderSize' => 6,
@@ -30,26 +48,26 @@ $table->addRow(1400);
 $table->addCell(1200, [
     'vMerge' => 'restart',
     'valign' => 'center'
-])->addText('№ п/п');
+])->addText('№ п/п', $tableHeaderStyle, $centerParagraph);
 
 // м: порода
 $table->addCell(2200, [
     'vMerge' => 'restart',
     'valign' => 'center'
-])->addText('Порода');
+])->addText('Порода', $tableHeaderStyle, $centerParagraph);
 
 // м: кличка
 $table->addCell(2200, [
     'vMerge' => 'restart',
     'valign' => 'center'
-])->addText('Кличка');
+])->addText('Кличка', $tableHeaderStyle, $centerParagraph);
 
 // м: пол (вертикальный текст)
 $table->addCell(900, [
     'vMerge' => 'restart',
     'valign' => 'center',
     'textDirection' => \PhpOffice\PhpWord\Style\Cell::TEXT_DIR_BTLR
-])->addText('Пол');
+])->addText('Пол', $tableHeaderStyle, $centerParagraph);
 
 if (!empty($htmlTable)) {
 
