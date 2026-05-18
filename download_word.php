@@ -47,7 +47,7 @@ $table = $section->addTable([
 ]);
 
 // м: первая строка заголовков
-$table->addRow(1400);
+$table->addRow(900);
 
 // м: № п/п
 $table->addCell(1200, [
@@ -108,8 +108,8 @@ $table->addCell(2500, [
 ])->addText('Владелец, проводник', $tableTextStyle, $centerParagraph);
 
 // м: объединение колонок
-$table->addCell(3200, [
-    'gridSpan' => 3,
+$table->addCell(2200 * count($categories), [
+    'gridSpan' => count($categories),
     'valign' => 'center'
 ])->addText('Результаты по категориям', $tableHeaderStyle, $centerParagraph);
 
@@ -120,7 +120,7 @@ $table->addCell(2200, [
 ])->addText('Итоговый результат', $tableHeaderStyle, $centerParagraph);
 
 // м: Ф.И.О. инструктора
-$table->addCell(2500, [
+$table->addCell(1800, [
     'vMerge' => 'restart',
     'valign' => 'center'
 ])->addText('Ф.И.О. инструктора', $tableHeaderStyle, $centerParagraph);
@@ -133,21 +133,24 @@ for ($i = 0; $i < 9; $i++) {
     $table->addCell(null, ['vMerge' => 'continue']);
 }
 
-// м: подкатегории
 // м: динамический вывод категорий
 foreach ($categories as $categoryName) {
 
-    $table->addCell(1600, [
+    $table->addCell(1800, [
         'textDirection' => \PhpOffice\PhpWord\Style\Cell::TEXT_DIR_BTLR,
         'valign' => 'center'
     ])->addText($categoryName, $tableTextStyle,$centerParagraph);
 }
 
 // м: баллы и время
-$table->addCell(1400)->addText('Баллы, время', $tableTextStyle, $centerParagraph);
+$table->addCell(2200, [
+    'valign' => 'center'
+])->addText('Баллы, время', $tableTextStyle, $centerParagraph);
 
 // м: место
-$table->addCell(1000)->addText('Место', $tableTextStyle, $centerParagraph);
+$table->addCell(1400, [
+    'valign' => 'center'
+])->addText('Место', $tableTextStyle, $centerParagraph);
 
 // м: продолжение объединения инструктора
 $table->addCell(null, [
