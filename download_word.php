@@ -173,16 +173,25 @@ foreach ($rows as $rowData) {
 
     $table->addRow();
 
-    foreach ($rowData as $cellText) {
+    foreach ($rowData as $index => $cellText) {
 
-        $table->addCell(1400, [
-            'valign' => 'center'
-        ])->addText(
+    $cellStyle = [
+        'valign' => 'center'
+    ];
+
+    // м: вертикальная дата рождения
+    if ($index === 4) {
+        $cellStyle['textDirection'] =
+            \PhpOffice\PhpWord\Style\Cell::TEXT_DIR_BTLR;
+    }
+
+    $table->addCell(1400, $cellStyle)
+        ->addText(
             $cellText,
             $tableTextStyle,
             $centerParagraph
         );
-    }
+}
 }
 
 
