@@ -12,6 +12,8 @@ use PhpOffice\PhpWord\Style\Cell;
 
 // м: категории из формы
 $categories = json_decode($_POST['categories'] ?? '[]', true);
+// м: получение строк результатов
+$rows = json_decode($_POST['rows'] ?? '[]', true);
 
 $phpWord = new PhpWord();
 
@@ -103,6 +105,23 @@ foreach ($categories as $categoryName) {
         $tableTextStyle,
         $centerParagraph
     );
+}
+
+// м: вывод строк участников
+foreach ($rows as $rowData) {
+
+    $table->addRow();
+
+    foreach ($rowData as $cellText) {
+
+        $table->addCell(1400, [
+            'valign' => 'center'
+        ])->addText(
+            $cellText,
+            $tableTextStyle,
+            $centerParagraph
+        );
+    }
 }
 
 

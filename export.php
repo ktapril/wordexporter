@@ -534,6 +534,29 @@ categoriesInput.value = JSON.stringify(categories);
 
 form.appendChild(categoriesInput);
 
+// м: передача строк таблицы
+const rowsInput = document.createElement('input');
+
+rowsInput.type = 'hidden';
+rowsInput.name = 'rows';
+
+const rows = [];
+
+document.querySelectorAll('.export-table tbody tr').forEach(tr => {
+
+    const row = [];
+
+    tr.querySelectorAll('td').forEach(td => {
+        row.push(td.innerText.trim());
+    });
+
+    rows.push(row);
+});
+
+rowsInput.value = JSON.stringify(rows);
+
+form.appendChild(rowsInput);
+
         input.value = clonedTable.outerHTML;
 
         form.appendChild(input);
