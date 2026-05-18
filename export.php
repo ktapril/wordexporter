@@ -517,6 +517,23 @@ verticalCells.forEach(cell => {
         input.type = 'hidden';
         input.name = 'table_html';
 
+        // м: передача категорий в docx-файл
+const categoriesInput = document.createElement('input');
+
+categoriesInput.type = 'hidden';
+categoriesInput.name = 'categories';
+
+const categories = [];
+
+document.querySelectorAll('.export-table thead tr:nth-child(2) th.vertical-text')
+.forEach(th => {
+    categories.push(th.innerText.trim());
+});
+
+categoriesInput.value = JSON.stringify(categories);
+
+form.appendChild(categoriesInput);
+
         input.value = clonedTable.outerHTML;
 
         form.appendChild(input);

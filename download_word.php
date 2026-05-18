@@ -1,7 +1,7 @@
 <?php
 
-ini_set('display_errors', 1);
-error_reporting(E_ALL);
+// ini_set('display_errors', 1);
+// error_reporting(E_ALL);
 
 require_once 'vendor/autoload.php';
 
@@ -9,6 +9,9 @@ use PhpOffice\PhpWord\PhpWord;
 use PhpOffice\PhpWord\IOFactory;
 use PhpOffice\PhpWord\Style\Table;
 use PhpOffice\PhpWord\Style\Cell;
+
+// м: категории из формы
+$categories = json_decode($_POST['categories'] ?? '[]', true);
 
 $phpWord = new PhpWord();
 
@@ -67,7 +70,41 @@ $table->addCell(900, [
     'vMerge' => 'restart',
     'valign' => 'center',
     'textDirection' => \PhpOffice\PhpWord\Style\Cell::TEXT_DIR_BTLR
-])->addText('Пол', $tableHeaderStyle, $centerParagraph);
+])->addText('Пол', $tableTextStyle, $centerParagraph);
+
+// м: тест объединения колонок
+$table->addCell(3200, [
+    'gridSpan' => 3,
+    'valign' => 'center'
+])->addText(
+    'Результаты по категориям',
+    $tableHeaderStyle,
+    $centerParagraph
+);
+
+// м: вторая строка заголовков
+$table->addRow(1200);
+
+// м: продолжение вертикального объединения
+$table->addCell(null, ['vMerge' => 'continue']);
+$table->addCell(null, ['vMerge' => 'continue']);
+$table->addCell(null, ['vMerge' => 'continue']);
+$table->addCell(null, ['vMerge' => 'continue']);
+
+// м: подкатегории
+// м: динамический вывод категорий
+foreach ($categories as $categoryName) {
+
+    $table->addCell(1600, [
+        'textDirection' => \PhpOffice\PhpWord\Style\Cell::TEXT_DIR_BTLR,
+        'valign' => 'center'
+    ])->addText(
+        $categoryName,
+        $tableTextStyle,
+        $centerParagraph
+    );
+}
+
 
 if (!empty($htmlTable)) {
 
