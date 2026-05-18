@@ -74,24 +74,64 @@ $table->addCell(900, [
     'textDirection' => \PhpOffice\PhpWord\Style\Cell::TEXT_DIR_BTLR
 ])->addText('Пол', $tableTextStyle, $centerParagraph);
 
-// м: тест объединения колонок
+// м: дата рождения
+$table->addCell(1500, [
+    'vMerge' => 'restart',
+    'valign' => 'center',
+    'textDirection' => \PhpOffice\PhpWord\Style\Cell::TEXT_DIR_BTLR
+])->addText('Дата рождения', $tableTextStyle, $centerParagraph);
+
+// м: № клейма или микрочипа
+$table->addCell(2200, [
+    'vMerge' => 'restart',
+    'valign' => 'center'
+])->addText('№ клейма или микрочипа', $tableHeaderStyle, $centerParagraph);
+
+// м: № родословной
+$table->addCell(1500, [
+    'vMerge' => 'restart',
+    'valign' => 'center',
+    'textDirection' => \PhpOffice\PhpWord\Style\Cell::TEXT_DIR_BTLR
+])->addText('№ родословной', $tableTextStyle, $centerParagraph);
+
+// м: № квалификационной книжки
+$table->addCell(1500, [
+    'vMerge' => 'restart',
+    'valign' => 'center',
+    'textDirection' => \PhpOffice\PhpWord\Style\Cell::TEXT_DIR_BTLR
+])->addText('№ квал. книжки', $tableTextStyle, $centerParagraph);
+
+// м: владелец, проводник
+$table->addCell(2500, [
+    'vMerge' => 'restart',
+    'valign' => 'center'
+])->addText('Владелец, проводник', $tableTextStyle, $centerParagraph);
+
+// м: объединение колонок
 $table->addCell(3200, [
     'gridSpan' => 3,
     'valign' => 'center'
-])->addText(
-    'Результаты по категориям',
-    $tableHeaderStyle,
-    $centerParagraph
-);
+])->addText('Результаты по категориям', $tableHeaderStyle, $centerParagraph);
+
+// м: итоговый результат
+$table->addCell(2200, [
+    'gridSpan' => 2,
+    'valign' => 'center'
+])->addText('Итоговый результат', $tableHeaderStyle, $centerParagraph);
+
+// м: Ф.И.О. инструктора
+$table->addCell(2500, [
+    'vMerge' => 'restart',
+    'valign' => 'center'
+])->addText('Ф.И.О. инструктора', $tableHeaderStyle, $centerParagraph);
 
 // м: вторая строка заголовков
 $table->addRow(1200);
 
 // м: продолжение вертикального объединения
-$table->addCell(null, ['vMerge' => 'continue']);
-$table->addCell(null, ['vMerge' => 'continue']);
-$table->addCell(null, ['vMerge' => 'continue']);
-$table->addCell(null, ['vMerge' => 'continue']);
+for ($i = 0; $i < 9; $i++) {
+    $table->addCell(null, ['vMerge' => 'continue']);
+}
 
 // м: подкатегории
 // м: динамический вывод категорий
@@ -100,12 +140,19 @@ foreach ($categories as $categoryName) {
     $table->addCell(1600, [
         'textDirection' => \PhpOffice\PhpWord\Style\Cell::TEXT_DIR_BTLR,
         'valign' => 'center'
-    ])->addText(
-        $categoryName,
-        $tableTextStyle,
-        $centerParagraph
-    );
+    ])->addText($categoryName, $tableTextStyle,$centerParagraph);
 }
+
+// м: баллы и время
+$table->addCell(1400)->addText('Баллы, время', $tableTextStyle, $centerParagraph);
+
+// м: место
+$table->addCell(1000)->addText('Место', $tableTextStyle, $centerParagraph);
+
+// м: продолжение объединения инструктора
+$table->addCell(null, [
+    'vMerge' => 'continue'
+]);
 
 // м: вывод строк участников
 foreach ($rows as $rowData) {
@@ -136,7 +183,7 @@ if (!empty($htmlTable)) {
 }
 
 
-$fileName = 'test.docx';
+$fileName = 'results.docx';
 
 header("Content-Description: File Transfer");
 header('Content-Disposition: attachment; filename="' . $fileName . '"');
