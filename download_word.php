@@ -12,6 +12,7 @@ use PhpOffice\PhpWord\Style\Cell;
 
 // м: категории из формы
 $categories = json_decode($_POST['categories'] ?? '[]', true);
+
 // м: получение строк результатов
 $rows = json_decode($_POST['rows'] ?? '[]', true);
 
@@ -36,7 +37,9 @@ $tableHeaderStyle = [
 
 // м: выравнивание текста
 $centerParagraph = [
-    'alignment' => 'center'
+    'alignment' => 'center',
+    'spaceAfter' => 0,
+    'spaceBefore' => 0
 ];
 
 // м: создание таблицы Word
@@ -47,7 +50,10 @@ $table = $section->addTable([
 ]);
 
 // м: первая строка заголовков
-$table->addRow(900);
+$table->addRow(900, [
+    'tblHeader' => true
+]);
+
 
 // м: № п/п
 $table->addCell(1200, [
@@ -71,14 +77,14 @@ $table->addCell(2200, [
 $table->addCell(900, [
     'vMerge' => 'restart',
     'valign' => 'center',
-    'textDirection' => \PhpOffice\PhpWord\Style\Cell::TEXT_DIR_BTLR
+    'textDirection' => Cell::TEXT_DIR_BTLR
 ])->addText('Пол', $tableTextStyle, $centerParagraph);
 
 // м: дата рождения
-$table->addCell(1500, [
+$table->addCell(900, [
     'vMerge' => 'restart',
     'valign' => 'center',
-    'textDirection' => \PhpOffice\PhpWord\Style\Cell::TEXT_DIR_BTLR
+    'textDirection' => Cell::TEXT_DIR_BTLR
 ])->addText('Дата рождения', $tableTextStyle, $centerParagraph);
 
 // м: № клейма или микрочипа
@@ -88,17 +94,17 @@ $table->addCell(2200, [
 ])->addText('№ клейма или микрочипа', $tableHeaderStyle, $centerParagraph);
 
 // м: № родословной
-$table->addCell(1500, [
+$table->addCell(700, [
     'vMerge' => 'restart',
     'valign' => 'center',
-    'textDirection' => \PhpOffice\PhpWord\Style\Cell::TEXT_DIR_BTLR
+    'textDirection' => Cell::TEXT_DIR_BTLR
 ])->addText('№ родословной', $tableTextStyle, $centerParagraph);
 
 // м: № квалификационной книжки
-$table->addCell(1500, [
+$table->addCell(900, [
     'vMerge' => 'restart',
     'valign' => 'center',
-    'textDirection' => \PhpOffice\PhpWord\Style\Cell::TEXT_DIR_BTLR
+    'textDirection' => Cell::TEXT_DIR_BTLR
 ])->addText('№ квал. книжки', $tableTextStyle, $centerParagraph);
 
 // м: владелец, проводник
@@ -112,11 +118,13 @@ $cell = $table->addCell(2200 * count($categories), [
     'gridSpan' => count($categories),
     'valign' => 'center'
 ]);
+
 $cell->addText('Результаты по категориям', $tableHeaderStyle, [
     'alignment' => 'center',
     'spaceAfter' => 0,
     'spaceBefore' => 0
 ]);
+
 $cell->addText('баллы, время', $tableTextStyle, [
     'alignment' => 'center',
     'spaceAfter' => 0,
@@ -126,8 +134,7 @@ $cell->addText('баллы, время', $tableTextStyle, [
 // м: итоговый результат
 $table->addCell(2200, [
     'gridSpan' => 2,
-    'valign' => 'center',
-    'vMerge' => 'restart'
+    'valign' => 'center'
 ])->addText('Итоговый результат', $tableHeaderStyle, $centerParagraph);
 
 // м: Ф.И.О. инструктора
@@ -137,7 +144,10 @@ $table->addCell(1800, [
 ])->addText('Ф.И.О. инструктора', $tableHeaderStyle, $centerParagraph);
 
 // м: вторая строка заголовков
-$table->addRow(1200);
+$table->addRow(1200, [
+    'tblHeader' => true
+]);
+
 
 // м: продолжение вертикального объединения
 for ($i = 0; $i < 9; $i++) {
@@ -147,21 +157,33 @@ for ($i = 0; $i < 9; $i++) {
 // м: динамический вывод категорий
 foreach ($categories as $categoryName) {
 
-    $table->addCell(1800, [
-        'textDirection' => \PhpOffice\PhpWord\Style\Cell::TEXT_DIR_BTLR,
+    $table->addCell(900, [
+        'textDirection' => Cell::TEXT_DIR_BTLR,
         'valign' => 'center'
-    ])->addText($categoryName, $tableTextStyle,$centerParagraph);
+    ])->addText(
+        $categoryName,
+        $tableTextStyle,
+        $centerParagraph
+    );
 }
 
 // м: баллы и время
 $table->addCell(2200, [
     'valign' => 'center'
-])->addText('Баллы, время', $tableTextStyle, $centerParagraph);
+])->addText(
+    'Баллы, время',
+    $tableTextStyle,
+    $centerParagraph
+);
 
 // м: место
 $table->addCell(1400, [
     'valign' => 'center'
-])->addText('Место', $tableTextStyle, $centerParagraph);
+])->addText(
+    'Место',
+    $tableTextStyle,
+    $centerParagraph
+);
 
 // м: продолжение объединения инструктора
 $table->addCell(null, [
@@ -171,40 +193,52 @@ $table->addCell(null, [
 // м: вывод строк участников
 foreach ($rows as $rowData) {
 
-    $table->addRow();
+    // м: высота строки для вертикального текста
+    $table->addRow(1000);
 
     foreach ($rowData as $index => $cellText) {
 
-    $cellStyle = [
-        'valign' => 'center'
-    ];
+        $cellStyle = [
+            'valign' => 'center'
+        ];
 
-    // м: вертикальная дата рождения
-    if ($index === 4) {
-        $cellStyle['textDirection'] =
-            \PhpOffice\PhpWord\Style\Cell::TEXT_DIR_BTLR;
+        // м: вертикальные колонки
+        $verticalColumns = [3, 4, 6, 7];
+
+        // м: категории начинаются после 9 колонки
+        $categoryStartIndex = 9;
+
+        // м: количество категорий
+        $categoryEndIndex = $categoryStartIndex + count($categories) - 1;
+
+        // м: категории тоже вертикальные
+        for ($i = $categoryStartIndex; $i <= $categoryEndIndex; $i++) {
+            $verticalColumns[] = $i;
+        }
+
+        // м: вертикальный текст
+        if (in_array($index, $verticalColumns)) {
+
+            $cellStyle['textDirection'] =
+                Cell::TEXT_DIR_BTLR;
+        }
+
+        // м: ширина по умолчанию
+        $cellWidth = 1400;
+
+        // м: узкие вертикальные колонки
+        if (in_array($index, $verticalColumns)) {
+            $cellWidth = 700;
+        }
+
+        $table->addCell($cellWidth, $cellStyle)
+            ->addText(
+                $cellText,
+                $tableTextStyle,
+                $centerParagraph
+            );
     }
-
-    $table->addCell(1400, $cellStyle)
-        ->addText(
-            $cellText,
-            $tableTextStyle,
-            $centerParagraph
-        );
 }
-}
-
-
-if (!empty($htmlTable)) {
-
-    \PhpOffice\PhpWord\Shared\Html::addHtml(
-        $section,
-        $htmlTable,
-        false,
-        false
-    );
-}
-
 
 $fileName = 'results.docx';
 
