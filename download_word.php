@@ -107,16 +107,19 @@ $table->addCell(2500, [
     'valign' => 'center'
 ])->addText('Владелец, проводник', $tableTextStyle, $centerParagraph);
 
-// м: объединение колонок
-$table->addCell(2200 * count($categories), [
+// м: объединение колонок (две строки текста в одной ячейке)
+$cell = $table->addCell(2200 * count($categories), [
     'gridSpan' => count($categories),
-    'valign' => 'center'
-])->addText('Результаты по категориям', $tableHeaderStyle, $centerParagraph);
+    'valign' => 'center',
+]);
+$cell->addText('Результаты по категориям', $tableHeaderStyle, ['alignment' => 'center']);
+$cell->addText('баллы, время', $tableTextStyle, ['alignment' => 'center']);
 
 // м: итоговый результат
 $table->addCell(2200, [
     'gridSpan' => 2,
-    'valign' => 'center'
+    'valign' => 'center',
+    'vMerge' => 'restart'
 ])->addText('Итоговый результат', $tableHeaderStyle, $centerParagraph);
 
 // м: Ф.И.О. инструктора
