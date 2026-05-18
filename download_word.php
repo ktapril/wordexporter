@@ -110,10 +110,18 @@ $table->addCell(2500, [
 // м: объединение колонок (две строки текста в одной ячейке)
 $cell = $table->addCell(2200 * count($categories), [
     'gridSpan' => count($categories),
-    'valign' => 'center',
+    'valign' => 'center'
 ]);
-$cell->addText('Результаты по категориям', $tableHeaderStyle, ['alignment' => 'center']);
-$cell->addText('баллы, время', $tableTextStyle, ['alignment' => 'center']);
+$cell->addText('Результаты по категориям', $tableHeaderStyle, [
+    'alignment' => 'center',
+    'spaceAfter' => 0,
+    'spaceBefore' => 0
+]);
+$cell->addText('баллы, время', $tableTextStyle, [
+    'alignment' => 'center',
+    'spaceAfter' => 0,
+    'spaceBefore' => 0
+]);
 
 // м: итоговый результат
 $table->addCell(2200, [
