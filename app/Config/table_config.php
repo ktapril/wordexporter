@@ -8,7 +8,7 @@ return [
     // ширина колонок
     'column_widths' => [
 
-        'number' => 1200,
+        'number' => 1000,
         'breed' => 2200,
         'nickname' => 2200,
         'sex' => 900,
@@ -22,7 +22,7 @@ return [
         'category' => 900,
 
         // итоговый результат
-        'result' => 2200,
+        'result' => 1800,
         'place' => 1400,
 
         // инструктор

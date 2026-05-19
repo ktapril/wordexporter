@@ -1,12 +1,16 @@
 <?php
 
-// ini_set('display_errors', 1);
-// error_reporting(E_ALL);
+//ini_set('display_errors', 1);
+//error_reporting(E_ALL);
 
 require_once 'vendor/autoload.php';
 
 // м: конфиг таблицы
 $config = require 'app/Config/table_config.php';
+
+require_once 'app/Helpers/WordStyleHelper.php';
+
+require_once 'app/Services/TableBuilderService.php';
 
 use PhpOffice\PhpWord\PhpWord;
 use PhpOffice\PhpWord\IOFactory;
@@ -26,24 +30,16 @@ $section = $phpWord->addSection([
 ]);
 
 // м: стиль обычного текста таблицы
-$tableTextStyle = [
-    'name' => 'Times New Roman',
-    'size' => 9
-];
+$tableTextStyle =
+    WordStyleHelper::getTableTextStyle();
 
 // м: стиль заголовков таблицы
-$tableHeaderStyle = [
-    'name' => 'Times New Roman',
-    'size' => 9,
-    'bold' => true
-];
+$tableHeaderStyle =
+    WordStyleHelper::getHeaderStyle();
 
 // м: выравнивание текста
-$centerParagraph = [
-    'alignment' => 'center',
-    'spaceAfter' => 0,
-    'spaceBefore' => 0
-];
+$centerParagraph =
+    WordStyleHelper::getCenterParagraph();
 
 // м: создание таблицы Word
 $table = $section->addTable([
