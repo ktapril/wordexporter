@@ -476,32 +476,6 @@ clonedTable.style.width = '100%';
 
 const allCells = clonedTable.querySelectorAll('th, td');
 
-/* allCells.forEach(cell => {
-
-    cell.style.border = '1px solid black';
-    cell.style.padding = '10px';
-    cell.style.textAlign = 'center';
-    cell.style.color = 'black';
-    cell.style.fontWeight = 'normal';
-    cell.style.fontSize = '9pt';
-    cell.style.fontFamily = "'Times New Roman', Times, serif";
-
-    cell.style.width = cell.offsetWidth + 'px';
-});
-
-const verticalCells = clonedTable.querySelectorAll('.vertical-text');
-
-verticalCells.forEach(cell => {
-
-
-    cell.style.width = '28px';
-    cell.style.minWidth = '28px';
-
-    cell.style.whiteSpace = 'nowrap';
-    cell.style.textAlign = 'center';
-    cell.style.verticalAlign = 'middle';
-});
-*/
         if (!table) {
             alert('Сначала сформируйте таблицу');
             return;
