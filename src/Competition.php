@@ -10,6 +10,7 @@ class Competition
     private bool $isPublished;
     private ?string $startDate;
     private ?string $endDate;
+    private ?string $templatePath;
 
     public function __construct(
         string $name,
@@ -17,7 +18,8 @@ class Competition
         ?int $id = null,
         bool $isPublished = false,
         ?string $startDate = null,
-        ?string $endDate = null
+        ?string $endDate = null,
+        ?string $templatePath = null
     ) {
         $this->id = $id;
         $this->name = $name;
@@ -25,6 +27,7 @@ class Competition
         $this->isPublished = $isPublished;
         $this->startDate = $startDate;
         $this->endDate = $endDate;
+        $this->templatePath = $templatePath;
     }
 
     public function getId(): ?int
@@ -89,4 +92,14 @@ class Competition
         $today = date('Y-m-d');
         return $today >= $this->startDate && $today <= $this->endDate;
     }
+
+public function getTemplatePath(): ?string
+{
+    return $this->templatePath;
+}
+
+public function setTemplatePath(?string $templatePath): void
+{
+    $this->templatePath = $templatePath;
+}
 }

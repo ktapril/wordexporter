@@ -1634,4 +1634,7 @@ if (!$this->hasColumn('competitions', 'template_path')) {
             throw $e;
         }
     }
+
+
+    
 }

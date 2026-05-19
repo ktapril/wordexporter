@@ -322,6 +322,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $categoryIds = [$categoryIds];
         }
 
+
+        
         // Фильтруем и валидируем ID категорий
         $categoryIds = array_filter(array_map(fn($id) => filter_var($id, FILTER_VALIDATE_INT), $categoryIds));
 
