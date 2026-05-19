@@ -43,6 +43,11 @@ class DatabaseManager
             $this->pdo->exec('ALTER TABLE competitions ADD COLUMN end_date TEXT;');
         }
 
+// м: добавление поля для хранения пути к шаблону документа
+if (!$this->hasColumn('competitions', 'template_path')) {
+    $this->pdo->exec('ALTER TABLE competitions ADD COLUMN template_path TEXT;');
+}
+
         $this->pdo->exec(
             "CREATE TABLE IF NOT EXISTS categories (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
