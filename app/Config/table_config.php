@@ -17,15 +17,12 @@ return [
         'pedigree' => 700,
         'qualification_book' => 900,
         'owner' => 2500,
-
-        // категории
         'category' => 900,
 
         // итоговый результат
         'result' => 1800,
         'place' => 1400,
-
-        // инструктор
+        
         'instructor' => 1800,
 
         // обычные ячейки участников

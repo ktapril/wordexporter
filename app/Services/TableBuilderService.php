@@ -4,7 +4,7 @@ use PhpOffice\PhpWord\Style\Cell;
 
 class TableBuilderService
 {
-    // создание таблицы
+    // м: создание таблицы
     public function build(
         $section,
         $categories,
@@ -12,7 +12,7 @@ class TableBuilderService
         $config
     ) {
 
-        // создание таблицы Word
+        // м: создание таблицы Word
         $table = $section->addTable([
             'borderSize' => 6,
             'borderColor' => '000000',
@@ -22,7 +22,7 @@ class TableBuilderService
         return $table;
     }
 
-    // построение шапки таблицы
+    // м: построение шапки таблицы
     public function buildHeader(
         $table,
         $categories,
@@ -54,7 +54,7 @@ class TableBuilderService
         );
 
         // м: порода
-        $table->addCell(2200, [
+        $table->addCell($config['column_widths']['breed'], [
             'vMerge' => 'restart',
             'valign' => 'center'
         ])->addText(
@@ -64,7 +64,7 @@ class TableBuilderService
         );
 
         // м: кличка
-        $table->addCell(2200, [
+        $table->addCell($config['column_widths']['nickname'], [
             'vMerge' => 'restart',
             'valign' => 'center'
         ])->addText(
@@ -74,7 +74,7 @@ class TableBuilderService
         );
 
         // м: пол
-        $table->addCell(900, [
+        $table->addCell($config['column_widths']['sex'], [
             'vMerge' => 'restart',
             'valign' => 'center',
             'textDirection' => Cell::TEXT_DIR_BTLR
@@ -85,7 +85,7 @@ class TableBuilderService
         );
 
         // м: дата рождения
-        $table->addCell(900, [
+        $table->addCell($config['column_widths']['birthdate'], [
             'vMerge' => 'restart',
             'valign' => 'center',
             'textDirection' => Cell::TEXT_DIR_BTLR
@@ -96,7 +96,7 @@ class TableBuilderService
         );
 
         // м: № клейма или микрочипа
-        $table->addCell(2200, [
+        $table->addCell($config['column_widths']['chip'], [
             'vMerge' => 'restart',
             'valign' => 'center'
         ])->addText(
@@ -106,7 +106,7 @@ class TableBuilderService
         );
 
         // м: № родословной
-        $table->addCell(700, [
+        $table->addCell($config['column_widths']['pedigree'], [
             'vMerge' => 'restart',
             'valign' => 'center',
             'textDirection' => Cell::TEXT_DIR_BTLR
@@ -117,7 +117,7 @@ class TableBuilderService
         );
 
         // м: № квалификационной книжки
-        $table->addCell(900, [
+        $table->addCell($config['column_widths']['qualification_book'], [
             'vMerge' => 'restart',
             'valign' => 'center',
             'textDirection' => Cell::TEXT_DIR_BTLR
@@ -128,9 +128,10 @@ class TableBuilderService
         );
 
         // м: владелец, проводник
-        $table->addCell(2500, [
+        $table->addCell($config['column_widths']['owner'], [
             'vMerge' => 'restart',
-            'valign' => 'center'
+            'valign' => 'center',
+            'textDirection' => Cell::TEXT_DIR_BTLR
         ])->addText(
             'Владелец, проводник',
             $tableTextStyle,
@@ -138,8 +139,7 @@ class TableBuilderService
         );
 
         // м: результаты по категориям
-        $cell = $table->addCell(
-            900 * count($categories),
+        $cell = $table->addCell( $config['column_widths']['category'] * count($categories),
             [
                 'gridSpan' => count($categories),
                 'valign' => 'center'
@@ -167,7 +167,7 @@ class TableBuilderService
         );
 
         // м: итоговый результат
-        $table->addCell(2200, [
+        $table->addCell($config['column_widths']['result'], [
             'gridSpan' => 2,
             'valign' => 'center'
         ])->addText(
@@ -177,7 +177,7 @@ class TableBuilderService
         );
 
         // м: Ф.И.О. инструктора
-        $table->addCell(1800, [
+        $table->addCell($config['column_widths']['instructor'], [
             'vMerge' => 'restart',
             'valign' => 'center'
         ])->addText(
@@ -202,7 +202,7 @@ class TableBuilderService
         // м: категории
         foreach ($categories as $categoryName) {
 
-            $table->addCell(900, [
+            $table->addCell($config['column_widths']['category'], [
                 'textDirection' => Cell::TEXT_DIR_BTLR,
                 'valign' => 'center'
             ])->addText(
@@ -213,7 +213,7 @@ class TableBuilderService
         }
 
         // м: баллы и время
-        $table->addCell(2200, [
+        $table->addCell($config['column_widths']['result'], [
             'valign' => 'center'
         ])->addText(
             'Баллы, время',
@@ -222,7 +222,7 @@ class TableBuilderService
         );
 
         // м: место
-        $table->addCell(1400, [
+        $table->addCell($config['column_widths']['place'], [
             'valign' => 'center'
         ])->addText(
             'Место',
@@ -234,5 +234,85 @@ class TableBuilderService
         $table->addCell(null, [
             'vMerge' => 'continue'
         ]);
+    }
+
+    // м: построение строк участников
+    public function buildRows(
+        $table,
+        $rows,
+        $categories,
+        $config
+    ) {
+
+        $tableTextStyle =
+            WordStyleHelper::getTableTextStyle();
+
+        $centerParagraph =
+            WordStyleHelper::getCenterParagraph();
+
+        // м: вывод строк участников
+        foreach ($rows as $rowData) {
+
+            // м: высота строки
+            $table->addRow(
+                $config['row_heights']['content']
+            );
+
+            foreach ($rowData as $index => $cellText) {
+
+                $cellStyle = [
+                    'valign' => 'center'
+                ];
+
+                // м: вертикальные колонки
+                $verticalColumns =
+                    $config['vertical_columns'];
+
+                // м: категории начинаются после 9 колонки
+                $categoryStartIndex = 9;
+
+                // м: конец категорий
+                $categoryEndIndex =
+                    $categoryStartIndex +
+                    count($categories) - 1;
+
+                // м: категории вертикальные
+                for (
+                    $i = $categoryStartIndex;
+                    $i <= $categoryEndIndex;
+                    $i++
+                ) {
+
+                    $verticalColumns[] = $i;
+                }
+
+                // м: вертикальный текст
+                if (in_array($index, $verticalColumns)) {
+
+                    $cellStyle['textDirection'] =
+                        Cell::TEXT_DIR_BTLR;
+                }
+
+                // м: ширина по умолчанию
+                $cellWidth =
+                    $config['column_widths']['default_content'];
+
+                // м: вертикальные ячейки
+                if (in_array($index, $verticalColumns)) {
+
+                    $cellWidth =
+                        $config['column_widths']['vertical_content'];
+                }
+
+                $table->addCell(
+                    $cellWidth,
+                    $cellStyle
+                )->addText(
+                    $cellText,
+                    $tableTextStyle,
+                    $centerParagraph
+                );
+            }
+        }
     }
 }

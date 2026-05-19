@@ -1,21 +1,21 @@
 <?php
 
-//ini_set('display_errors', 1);
-//error_reporting(E_ALL);
+// ini_set('display_errors', 1);
+// error_reporting(E_ALL);
 
 require_once 'vendor/autoload.php';
 
 // м: конфиг таблицы
 $config = require 'app/Config/table_config.php';
 
+// м: helper со стилями
 require_once 'app/Helpers/WordStyleHelper.php';
 
+// м: сервис таблицы
 require_once 'app/Services/TableBuilderService.php';
 
 use PhpOffice\PhpWord\PhpWord;
 use PhpOffice\PhpWord\IOFactory;
-use PhpOffice\PhpWord\Style\Table;
-use PhpOffice\PhpWord\Style\Cell;
 
 // м: категории из формы
 $categories = json_decode($_POST['categories'] ?? '[]', true);
@@ -29,9 +29,10 @@ $section = $phpWord->addSection([
     'orientation' => 'landscape'
 ]);
 
-  // м: сервис построения таблицы
+// м: создание сервиса таблицы
 $tableBuilder = new TableBuilderService();
 
+// м: создание таблицы
 $table = $tableBuilder->build(
     $section,
     $categories,
@@ -39,74 +40,20 @@ $table = $tableBuilder->build(
     $config
 );
 
-// м: построение шапки таблицы
+// м: построение шапки
 $tableBuilder->buildHeader(
     $table,
     $categories,
     $config
 );
 
-// м: стиль обычного текста таблицы
-$tableTextStyle =
-    WordStyleHelper::getTableTextStyle();
-
-// м: стиль заголовков таблицы
-$tableHeaderStyle =
-    WordStyleHelper::getHeaderStyle();
-
-// м: выравнивание текста
-$centerParagraph =
-    WordStyleHelper::getCenterParagraph();
-
-// м: вывод строк участников
-foreach ($rows as $rowData) {
-
-    // м: высота строки для вертикального текста
-    $table->addRow(1000);
-
-    foreach ($rowData as $index => $cellText) {
-
-        $cellStyle = [
-            'valign' => 'center'
-        ];
-
-        // м: вертикальные колонки
-        $verticalColumns = $config['vertical_columns'];
-
-        // м: категории начинаются после 9 колонки
-        $categoryStartIndex = 9;
-
-        // м: количество категорий
-        $categoryEndIndex = $categoryStartIndex + count($categories) - 1;
-
-        // м: категории тоже вертикальные
-        for ($i = $categoryStartIndex; $i <= $categoryEndIndex; $i++) {
-            $verticalColumns[] = $i;
-        }
-
-        // м: вертикальный текст
-        if (in_array($index, $verticalColumns)) {
-
-            $cellStyle['textDirection'] =
-                Cell::TEXT_DIR_BTLR;
-        }
-
-        // м: ширина по умолчанию
-        $cellWidth = 1400;
-
-        // м: узкие вертикальные колонки
-        if (in_array($index, $verticalColumns)) {
-            $cellWidth = 700;
-        }
-
-        $table->addCell($cellWidth, $cellStyle)
-            ->addText(
-                $cellText,
-                $tableTextStyle,
-                $centerParagraph
-            );
-    }
-}
+// м: построение строк участников
+$tableBuilder->buildRows(
+    $table,
+    $rows,
+    $categories,
+    $config
+);
 
 $fileName = 'results.docx';
 
