@@ -3,6 +3,8 @@
 use PhpOffice\PhpWord\PhpWord;
 use PhpOffice\PhpWord\IOFactory;
 
+//создает документ, секцию, сохраняет, отдает файл
+
 class WordExportService
 {
     public function export(
@@ -56,5 +58,6 @@ class WordExportService
 
         readfile($tempFile);
         unlink($tempFile);
+        exit;
     }
 }
