@@ -5,6 +5,9 @@
 
 require_once 'vendor/autoload.php';
 
+// м: конфиг таблицы
+$config = require 'app/Config/table_config.php';
+
 use PhpOffice\PhpWord\PhpWord;
 use PhpOffice\PhpWord\IOFactory;
 use PhpOffice\PhpWord\Style\Table;
@@ -50,13 +53,13 @@ $table = $section->addTable([
 ]);
 
 // м: первая строка заголовков
-$table->addRow(900, [
+$table->addRow($config['row_heights']['header_top'], [
     'tblHeader' => true
 ]);
 
 
 // м: № п/п
-$table->addCell(1200, [
+$table->addCell($config['column_widths']['number'], [
     'vMerge' => 'restart',
     'valign' => 'center'
 ])->addText('№ п/п', $tableHeaderStyle, $centerParagraph);
@@ -203,7 +206,7 @@ foreach ($rows as $rowData) {
         ];
 
         // м: вертикальные колонки
-        $verticalColumns = [3, 4, 6, 7];
+        $verticalColumns = $config['vertical_columns'];
 
         // м: категории начинаются после 9 колонки
         $categoryStartIndex = 9;
