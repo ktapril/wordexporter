@@ -2,6 +2,8 @@
 
 use PhpOffice\PhpWord\Style\Cell;
 
+//строит шапку и строки
+
 class TableBuilderService
 {
     // м: создание таблицы
@@ -236,83 +238,81 @@ class TableBuilderService
         ]);
     }
 
-    // м: построение строк участников
     public function buildRows(
-        $table,
-        $rows,
-        $categories,
-        $config
-    ) {
+    $table,
+    $rows,
+    $categories,
+    $config
+) {
 
-        $tableTextStyle =
-            WordStyleHelper::getTableTextStyle();
+    $tableTextStyle =
+        WordStyleHelper::getTableTextStyle();
 
-        $centerParagraph =
-            WordStyleHelper::getCenterParagraph();
+    $centerParagraph =
+        WordStyleHelper::getCenterParagraph();
 
-        // м: вывод строк участников
-        foreach ($rows as $rowData) {
+    // м: вертикальные колонки (только из конфига, без категорий)
+    $verticalColumns = $config['vertical_columns'];
 
-            // м: высота строки
-            $table->addRow(
-                $config['row_heights']['content']
-            );
+    // м: категории начинаются после 9 колонки
+    $categoryStartIndex = 9;
 
-            foreach ($rowData as $index => $cellText) {
+    // м: конец категорий
+    $categoryEndIndex =
+        $categoryStartIndex +
+        count($categories) - 1;
 
-                $cellStyle = [
-                    'valign' => 'center'
-                ];
+    foreach ($rows as $rowData) {
 
-                // м: вертикальные колонки
-                $verticalColumns =
-                    $config['vertical_columns'];
+        $table->addRow(
+            $config['row_heights']['content']
+        );
 
-                // м: категории начинаются после 9 колонки
-                $categoryStartIndex = 9;
+        foreach ($rowData as $index => $cellText) {
 
-                // м: конец категорий
-                $categoryEndIndex =
-                    $categoryStartIndex +
-                    count($categories) - 1;
+            $cellStyle = [
+                'valign' => 'center'
+            ];
 
-                // м: категории вертикальные
-                for (
-                    $i = $categoryStartIndex;
-                    $i <= $categoryEndIndex;
-                    $i++
-                ) {
+            // м: вертикальный текст только для колонок из конфига
+            if (in_array($index, $verticalColumns)) {
+                $cellStyle['textDirection'] =
+                    Cell::TEXT_DIR_BTLR;
+            }
 
-                    $verticalColumns[] = $i;
-                }
+            // ширина ячейки
+            if (in_array($index, $verticalColumns)) {
+                // узкие вертикальные колонки (пол, дата и т.д.)
+                $cellWidth =
+                    $config['column_widths']['vertical_content'];
 
-                // м: вертикальный текст
-                if (in_array($index, $verticalColumns)) {
+            } elseif ($index >= $categoryStartIndex && $index <= $categoryEndIndex) {
+                // колонки категорий 
+                $cellWidth =
+                    $config['column_widths']['category'];
 
-                    $cellStyle['textDirection'] =
-                        Cell::TEXT_DIR_BTLR;
-                }
-
-                // м: ширина по умолчанию
+            } else {
+                // обычные колонки
                 $cellWidth =
                     $config['column_widths']['default_content'];
-
-                // м: вертикальные ячейки
-                if (in_array($index, $verticalColumns)) {
-
-                    $cellWidth =
-                        $config['column_widths']['vertical_content'];
-                }
-
-                $table->addCell(
-                    $cellWidth,
-                    $cellStyle
-                )->addText(
-                    $cellText,
-                    $tableTextStyle,
-                    $centerParagraph
-                );
             }
+
+            $cell = $table->addCell(
+    $cellWidth,
+    $cellStyle
+);
+
+// разбивка текста по переносам строк
+$lines = explode("\n", $cellText);
+
+foreach ($lines as $line) {
+    $cell->addText(
+        trim($line),
+        $tableTextStyle,
+        $centerParagraph
+    );
+}
         }
     }
+}
 }

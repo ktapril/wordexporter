@@ -1,5 +1,7 @@
 <?php
 
+//стили 
+
 class WordStyleHelper
 {
     // стиль обычного текста таблицы
