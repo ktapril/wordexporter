@@ -24,8 +24,7 @@ class TemplateController
         $file = $_FILES['template'];
 
         // проверка расширения (только .docx)
-        $originalName = $file['name'];
-        $extension = strtolower(pathinfo($originalName, PATHINFO_EXTENSION));
+        $extension = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
 
         if ($extension !== 'docx') {
             http_response_code(400);
@@ -41,14 +40,14 @@ class TemplateController
             mkdir($templatesDir, 0755, true);
         }
 
-        // уникальное имя файла
+        // уникальное имя файла по ID соревнования
         $fileName = 'competition_' . $competitionId . '.docx';
         $filePath = $templatesDir . '/' . $fileName;
 
         // отправка загруженнего файла из временной папки в /templates/
         if (!move_uploaded_file($file['tmp_name'], $filePath)) {
             http_response_code(500);
-            echo json_encode(['success' => false, 'error' => 'Не удалось сохранить файл']);
+            echo json_encode(['success' => false, 'error' => 'Не удалось сохранить файл на диск']);
             return;
         }
 
@@ -56,17 +55,24 @@ class TemplateController
         $relativePath = 'templates/' . $fileName;
 
         // загрузка соревнования из БД, обновление template_path, сохранение
-        $appService = new \NoseworkV2\AppService();
-        $competition = $appService->getCompetitionById($competitionId);
+        try {
+            $db = new \NoseworkV2\DatabaseManager();
+            $competition = $db->getCompetitionById($competitionId);
 
-        if ($competition === null) {
-            http_response_code(404);
-            echo json_encode(['success' => false, 'error' => 'Соревнование не найдено']);
+            if ($competition === null) {
+                http_response_code(404);
+                echo json_encode(['success' => false, 'error' => 'Соревнование не найдено']);
+                return;
+            }
+
+            $competition->setTemplatePath($relativePath);
+            $db->updateCompetition($competition);
+
+        } catch (\Exception $e) {
+            http_response_code(500);
+            echo json_encode(['success' => false, 'error' => 'Ошибка базы данных: ' . $e->getMessage()]);
             return;
         }
-
-        $competition->setTemplatePath($relativePath);
-        $appService->updateCompetition($competition);
 
         echo json_encode(['success' => true, 'path' => $relativePath]);
     }
