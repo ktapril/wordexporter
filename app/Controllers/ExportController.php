@@ -23,7 +23,12 @@ class ExportController
 
         $config = require __DIR__ . '/../Config/table_config.php';
 
+        $templatePath = $_POST['template_path'] ?? null;
+        if ($templatePath === '') {
+            $templatePath = null;
+        }
+
         $service = new WordExportService();
-        $service->export($categories, $rows, $config);
+        $service->export($categories, $rows, $config, $templatePath);
     }
 }
