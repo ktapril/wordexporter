@@ -303,6 +303,22 @@ renderHeader($currentPage);
                                 <?php endforeach; ?>
                             </ul>
                             <input type="hidden" name="participant_order" id="participantOrderInput" value="">
+                           <div style="margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--border);">
+                                <label style="display: block; margin-bottom: 8px; font-weight: 600;">Шаблон документа (.docx):</label>
+                                <p style="margin-bottom: 12px; font-size: 14px; color: #ccc;">
+                                    Загрузите файл с нужными колонтитулами (.docx). Таблица будет вставлена в него.
+                                    <?php if ($selectedCompetition->getTemplatePath()): ?>
+                                        <br><span style="color: #7cbb5e;">✓ Шаблон загружен: <?= escape($selectedCompetition->getTemplatePath()) ?></span>
+                                    <?php else: ?>
+                                        <br><span style="color: #aaa;">Шаблон не загружен — документ будет создан без колонтитулов.</span>
+                                    <?php endif; ?>
+                                </p>
+                                <div style="display: flex; gap: 10px; align-items: center;">
+                                    <input type="file" id="templateFileInput" accept=".docx" style="color: var(--text);">
+                                    <button type="button" class="button" id="uploadTemplateButton">Загрузить шаблон</button>
+                                </div>
+                                <p id="uploadStatus" style="margin-top: 8px; font-size: 14px; display: none;"></p>
+                            </div>
                             <div style="display: flex; gap: 10px; margin-top: 15px;">
     <button type="submit" name="export_action" value="view" class="button">
         Сформировать
