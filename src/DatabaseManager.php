@@ -297,17 +297,18 @@ if (!$this->hasColumn('competitions', 'template_path')) {
     }
 
     public function insertCompetition(Competition $competition): int
-    {
-        $sql = "INSERT INTO competitions (name, description, start_date, end_date) VALUES (?, ?, ?, ?)";
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->execute([
-            $competition->getName(),
-            $competition->getDescription(),
-            $competition->getStartDate(),
-            $competition->getEndDate()
-        ]);
-        return (int)$this->pdo->lastInsertId();
-    }
+{
+    $sql = "INSERT INTO competitions (name, description, start_date, end_date, template_path) VALUES (?, ?, ?, ?, ?)";
+    $stmt = $this->pdo->prepare($sql);
+    $stmt->execute([
+        $competition->getName(),
+        $competition->getDescription(),
+        $competition->getStartDate(),
+        $competition->getEndDate(),
+        $competition->getTemplatePath()
+    ]);
+    return (int)$this->pdo->lastInsertId();
+}
 
     public function insertCategory(Category $category): int
     {
@@ -369,12 +370,13 @@ if (!$this->hasColumn('competitions', 'template_path')) {
         $competitions = [];
         foreach ($rows as $row) {
             $competitions[] = new Competition(
-                $row['name'],
-                $row['description'],
-                (int)$row['id'],
-                isset($row['is_published']) ? (bool)$row['is_published'] : false,
-                $row['start_date'] ?? null,
-                $row['end_date'] ?? null
+            $row['name'],
+            $row['description'],
+            (int)$row['id'],
+            isset($row['is_published']) ? (bool)$row['is_published'] : false,
+            $row['start_date'] ?? null,
+            $row['end_date'] ?? null,
+            $row['template_path'] ?? null
             );
         }
 
@@ -392,28 +394,30 @@ if (!$this->hasColumn('competitions', 'template_path')) {
         }
 
         return new Competition(
-            $row['name'],
-            $row['description'],
-            (int)$row['id'],
-            isset($row['is_published']) ? (bool)$row['is_published'] : false,
-            $row['start_date'] ?? null,
-            $row['end_date'] ?? null
-        );
+               $row['name'],
+               $row['description'],
+               (int)$row['id'],
+               isset($row['is_published']) ? (bool)$row['is_published'] : false,
+               $row['start_date'] ?? null,
+               $row['end_date'] ?? null,
+               $row['template_path'] ?? null
+               );
     }
 
-    public function updateCompetition(Competition $competition): void
-    {
-        $sql = 'UPDATE competitions SET name = ?, description = ?, is_published = ?, start_date = ?, end_date = ? WHERE id = ?';
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->execute([
-            $competition->getName(),
-            $competition->getDescription(),
-            $competition->isPublished() ? 1 : 0,
-            $competition->getStartDate(),
-            $competition->getEndDate(),
-            $competition->getId(),
-        ]);
-    }
+   public function updateCompetition(Competition $competition): void
+{
+    $sql = 'UPDATE competitions SET name = ?, description = ?, is_published = ?, start_date = ?, end_date = ?, template_path = ? WHERE id = ?';
+    $stmt = $this->pdo->prepare($sql);
+    $stmt->execute([
+        $competition->getName(),
+        $competition->getDescription(),
+        $competition->isPublished() ? 1 : 0,
+        $competition->getStartDate(),
+        $competition->getEndDate(),
+        $competition->getTemplatePath(),
+        $competition->getId(),
+    ]);
+}
 
     /**
      * Публикует или скрывает результаты соревнования
