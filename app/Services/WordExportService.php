@@ -10,14 +10,20 @@ class WordExportService
     public function export(
         array $categories,
         array $rows,
-        array $config
+        array $config,
+        ?string $templatePath = null
     ): void {
-
-        $phpWord = new PhpWord();
-
-        $section = $phpWord->addSection([
-            'orientation' => 'landscape'
-        ]);
+        // если шаблон передан, то загрузка его секции с колонтитулами.если нет, то идет создание обычного докумета
+        if ($templatePath !== null) {
+            $phpWord = $this->loadFromTemplate($templatePath);
+            $sections = $phpWord->getSections();
+            $section = $sections[0];
+        } else {
+            $phpWord = new PhpWord();
+            $section = $phpWord->addSection([
+                'orientation' => 'landscape'
+            ]);
+        }
 
         $tableBuilder = new TableBuilderService();
 
