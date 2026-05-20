@@ -13,70 +13,76 @@ class WordExportService
         array $config,
         ?string $templatePath = null
     ): void {
-        // если шаблон передан, то загрузка его секции с колонтитулами. если нет, то идет создание обычного докумета
-        if ($templatePath !== null) {
-            $phpWord = $this->loadFromTemplate($templatePath);
-            $sections = $phpWord->getSections();
-            $section = $sections[0];
-        } else {
-            $phpWord = new PhpWord();
-            $section = $phpWord->addSection([
-                'orientation' => 'landscape'
-            ]);
-        }
+
+        $phpWord = new PhpWord();
+        $section = $phpWord->addSection(['orientation' => 'landscape']);
 
         $tableBuilder = new TableBuilderService();
+        $table = $tableBuilder->build($section, $categories, $rows, $config);
+        $tableBuilder->buildHeader($table, $categories, $config);
+        $tableBuilder->buildRows($table, $rows, $categories, $config);
 
-        $table = $tableBuilder->build(
-            $section,
-            $categories,
-            $rows,
-            $config
-        );
-
-        $tableBuilder->buildHeader(
-            $table,
-            $categories,
-            $config
-        );
-
-        $tableBuilder->buildRows(
-            $table,
-            $rows,
-            $categories,
-            $config
-        );
-
-        $this->sendFile($phpWord);
-    }
-
-   private function loadFromTemplate(string $templatePath): PhpWord
-    {
-        // путь от корня проекта
-        $absolutePath = __DIR__ . '/../../' . $templatePath;
-
-        if (!file_exists($absolutePath)) {
-            throw new \RuntimeException('Файл шаблона не найден: ' . $absolutePath);
-        }
-
-        // загрузка существующего .docx 
-        return IOFactory::load($absolutePath);
-    }
-
-    private function sendFile(PhpWord $phpWord): void
-    {
-        $fileName = 'results.docx';
-        $tempFile = tempnam(sys_get_temp_dir(), 'word');
-
+        $tempFile = tempnam(sys_get_temp_dir(), 'word') . '.docx';
         $writer = IOFactory::createWriter($phpWord, 'Word2007');
         $writer->save($tempFile);
 
-        header('Content-Description: File Transfer');
-        header('Content-Disposition: attachment; filename="' . $fileName . '"');
-        header('Content-Type: application/vnd.openxmlformats-officedocument.wordprocessingml.document');
+        if ($templatePath !== null) {
+            $absolutePath = __DIR__ . '/../../' . $templatePath; //// путь от корня проекта
 
-        readfile($tempFile);
-        unlink($tempFile);
+            if (file_exists($absolutePath)) {
+                $resultFile = $this->mergeWithTemplate($tempFile, $absolutePath);
+                unlink($tempFile);
+                $this->sendFile($resultFile);
+                return;
+            }
+        }
+
+        $this->sendFile($tempFile);
+    }
+
+    private function mergeWithTemplate(string $docxWithTable, string $templatePath): string
+    {
+        // чтение XML таблицы из врем. документа
+        $zip = new ZipArchive();
+        $zip->open($docxWithTable);
+        $tableDocXml = $zip->getFromName('word/document.xml');
+        $zip->close();
+
+        // вырезка содержимое тела: всё между <w:body> и <w:sectPr>
+        preg_match('/<w:body>(.*?)<w:sectPr/s', $tableDocXml, $matches);
+        $tableBodyContent = $matches[1] ?? '';
+
+        // копия шаблон
+        $resultFile = tempnam(sys_get_temp_dir(), 'result') . '.docx';
+        copy($templatePath, $resultFile);
+
+        // вставка таблицы в тело шаблона, sectPr с колонтитулами не трогает
+        $zip = new ZipArchive();
+        $zip->open($resultFile);
+        $templateDocXml = $zip->getFromName('word/document.xml');
+
+        $newDocXml = preg_replace(
+            '/(<w:body>).*?(<w:sectPr)/s',
+            '$1' . $tableBodyContent . '$2',
+            $templateDocXml
+        );
+
+        $zip->deleteName('word/document.xml');
+        $zip->addFromString('word/document.xml', $newDocXml);
+        $zip->close();
+
+        return $resultFile;
+    }
+
+    private function sendFile(string $filePath): void
+    {
+        header('Content-Description: File Transfer');
+        header('Content-Disposition: attachment; filename="results.docx"');
+        header('Content-Type: application/vnd.openxmlformats-officedocument.wordprocessingml.document');
+        header('Content-Length: ' . filesize($filePath));
+
+        readfile($filePath);
+        unlink($filePath);
         exit;
     }
 }
