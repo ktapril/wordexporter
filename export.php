@@ -303,6 +303,7 @@ renderHeader($currentPage);
                                 <?php endforeach; ?>
                             </ul>
                             <input type="hidden" name="participant_order" id="participantOrderInput" value="">
+                            <input type="hidden" id="currentTemplatePath" value="<?= escape($selectedCompetition->getTemplatePath() ?? '') ?>">
                            <div style="margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--border);">
                                 <label style="display: block; margin-bottom: 8px; font-weight: 600;">Шаблон документа (.docx):</label>
                                 <p style="margin-bottom: 12px; font-size: 14px; color: #ccc;">
@@ -310,7 +311,7 @@ renderHeader($currentPage);
                                     <?php if ($selectedCompetition->getTemplatePath()): ?>
                                         <br><span style="color: #7cbb5e;">✓ Шаблон загружен: <?= escape($selectedCompetition->getTemplatePath()) ?></span>
                                     <?php else: ?>
-                                        <br><span style="color: #aaa;">Шаблон не загружен — документ будет создан без колонтитулов.</span>
+                                        <br><span style="color: #aaa;">Шаблон не загружен - документ будет создан без колонтитулов.</span>
                                     <?php endif; ?>
                                 </p>
                                 <div style="display: flex; gap: 10px; align-items: center;">
@@ -471,6 +472,57 @@ renderHeader($currentPage);
 
     // Инициализация порядка
     updateOrderInput();
+    // загрузка шаблона
+    const uploadButton = document.getElementById('uploadTemplateButton');
+    if (uploadButton) {
+        uploadButton.addEventListener('click', async function() {
+            const fileInput = document.getElementById('templateFileInput');
+            const statusEl = document.getElementById('uploadStatus');
+
+            if (!fileInput.files || fileInput.files.length === 0) {
+                statusEl.style.display = 'block';
+                statusEl.style.color = '#e07070';
+                statusEl.textContent = 'Выберите файл .docx';
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('template', fileInput.files[0]);
+            formData.append('competition_id', '<?= $selectedCompetitionId ?>');
+
+            uploadButton.disabled = true;
+            uploadButton.textContent = 'Загрузка..';
+            statusEl.style.display = 'none';
+
+            try {
+                const response = await fetch('upload_template.php', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const result = await response.json();
+
+                statusEl.style.display = 'block';
+
+                if (result.success) {
+                    statusEl.style.color = '#7cbb5e';
+                    statusEl.textContent = '✓ Шаблон успешно загружен: ' + result.path;
+                    // обновление скрытого поля, чтобы след. экспорт уже использовал шаблон
+                    document.getElementById('currentTemplatePath').value = result.path;
+                } else {
+                    statusEl.style.color = '#e07070';
+                    statusEl.textContent = 'Ошибка: ' + result.error;
+                }
+            } catch (err) {
+                statusEl.style.display = 'block';
+                statusEl.style.color = '#e07070';
+                statusEl.textContent = 'Ошибка сети. Попробуйте ещё раз.';
+            }
+
+            uploadButton.disabled = false;
+            uploadButton.textContent = 'Загрузить шаблон';
+        });
+    }
 
     // Обработчик кнопки скачивания таблицы
     const downloadButton = document.getElementById('downloadWordButton');
