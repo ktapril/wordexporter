@@ -309,10 +309,11 @@ renderHeader($currentPage);
                                 <p style="margin-bottom: 12px; font-size: 14px; color: #ccc;">
                                     Загрузите файл с нужными колонтитулами (.docx). Таблица будет вставлена в него.
                                     <?php if ($selectedCompetition->getTemplatePath()): ?>
-                                        <br><span style="color: #7cbb5e;">✓ Шаблон загружен: <?= escape($selectedCompetition->getTemplatePath()) ?></span>
-                                    <?php else: ?>
-                                        <br><span style="color: #aaa;">Шаблон не загружен - документ будет создан без колонтитулов.</span>
-                                    <?php endif; ?>
+    <br><span style="color: #7cbb5e;">✓ Шаблон загружен: <?= escape($selectedCompetition->getTemplatePath()) ?></span>
+    <button type="button" class="button" id="deleteTemplateButton" style="margin-left: 12px; background: transparent; border-color: #e07070; color: #e07070;">Удалить шаблон</button>
+<?php else: ?>
+    <br><span style="color: #aaa;">Шаблон не загружен — документ будет создан без колонтитулов.</span>
+<?php endif; ?>
                                 </p>
                                 <div style="display: flex; gap: 10px; align-items: center;">
                                     <input type="file" id="templateFileInput" accept=".docx" style="color: var(--text);">
@@ -521,6 +522,45 @@ renderHeader($currentPage);
 
             uploadButton.disabled = false;
             uploadButton.textContent = 'Загрузить шаблон';
+        });
+    }
+
+    // Удаление шаблона
+    const deleteButton = document.getElementById('deleteTemplateButton');
+    if (deleteButton) {
+        deleteButton.addEventListener('click', async function() {
+            if (!confirm('Удалить шаблон? Документы будут генерироваться без колонтитулов.')) {
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('competition_id', '<?= $selectedCompetitionId ?>');
+
+            deleteButton.disabled = true;
+            deleteButton.textContent = 'Удаление...';
+
+            try {
+                const response = await fetch('delete_template.php', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    // убираем кнопку и обновляем статус
+                    document.getElementById('currentTemplatePath').value = '';
+                    deleteButton.closest('p').innerHTML = '<span style="color: #aaa;">Шаблон не загружен — документ будет создан без колонтитулов.</span>';
+                } else {
+                    alert('Ошибка: ' + result.error);
+                    deleteButton.disabled = false;
+                    deleteButton.textContent = 'Удалить шаблон';
+                }
+            } catch (err) {
+                alert('Ошибка сети. Попробуйте ещё раз.');
+                deleteButton.disabled = false;
+                deleteButton.textContent = 'Удалить шаблон';
+            }
         });
     }
 
