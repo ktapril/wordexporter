@@ -13,7 +13,7 @@ class WordExportService
         array $config,
         ?string $templatePath = null
     ): void {
-        // если шаблон передан, то загрузка его секции с колонтитулами.если нет, то идет создание обычного докумета
+        // если шаблон передан, то загрузка его секции с колонтитулами. если нет, то идет создание обычного докумета
         if ($templatePath !== null) {
             $phpWord = $this->loadFromTemplate($templatePath);
             $sections = $phpWord->getSections();
@@ -48,6 +48,19 @@ class WordExportService
         );
 
         $this->sendFile($phpWord);
+    }
+
+   private function loadFromTemplate(string $templatePath): PhpWord
+    {
+        // путь от корня проекта
+        $absolutePath = __DIR__ . '/../../' . $templatePath;
+
+        if (!file_exists($absolutePath)) {
+            throw new \RuntimeException('Файл шаблона не найден: ' . $absolutePath);
+        }
+
+        // загрузка существующего .docx 
+        return IOFactory::load($absolutePath);
     }
 
     private function sendFile(PhpWord $phpWord): void
