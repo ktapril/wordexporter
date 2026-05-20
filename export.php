@@ -546,6 +546,12 @@ document.querySelectorAll('.export-table tbody tr').forEach(tr => {
 rowsInput.value = JSON.stringify(rows);
 
 form.appendChild(rowsInput);
+// передача пути к шаблону
+const templatePathInput = document.createElement('input');
+templatePathInput.type = 'hidden';
+templatePathInput.name = 'template_path';
+templatePathInput.value = document.getElementById('currentTemplatePath').value;
+form.appendChild(templatePathInput);
 
         input.value = clonedTable.outerHTML;
 
